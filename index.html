@@ -2,60 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>FAST TV LIFE</title>
-    <link rel="icon" href=""/>
+    <title>alraqi-tv</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            margin: 0;
-        }
-
-        .jwplayer {
-            position: absolute !important;
-        }
-
-        .jwplayer.jw-flag-aspect-mode {
-            min-height: 100%;
-            max-height: 100%;
-        }
-
-        .jw-logo-container {
-            position: absolute;
-            top: 2%;
-            right: 55%;
-        }
-    </style>
+    <script src="//libraries.alraqi-tv.com/jwplayer.js"></script>
 </head>
 <body>
     <div id="jwplayerDiv"></div>
-    <script src="//libraries.alraqi-tv.com/jwplayer.js"></script>
-    <script type="text/javascript">
-        // تحديث رابط البث
-        var config = {
-            "file": "http://azrotv.com/m3u8/sumaria/"
-        };
 
-        jwplayer("jwplayerDiv").setup({
-            file: config.file,
-            position: 'bottom',
-            autostart: true,
-            stretching: "",
-            width: "100%",
-            type: "hls",
-            volume: "100",
-            mute: false,
-            pipIcon: "true",
-            castIcon: "true",
-            title: "FAST TV LIFE",
-            logo: {
-                file: "",
-                hide: false,
-                position: "bottom-right",
-                margin: "150",
-                height: "25"
+    <script>
+        async function getStreamUrl() {
+            try {
+                let response = await fetch("https://livestream.almanasa.tv/sport/ch1/ch1_1080.m3u8", {
+                    method: "GET",
+                    headers: {
+                        "authority": "livestream.almanasa.tv",
+                        "origin": "https://tv.almanasa.tv",
+                        "referer": "https://tv.almanasa.tv/",
+                        "user-agent": "Mozilla/5.0 (Linux; Android 11; W-V770 Build/RP1A.200720.011; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/133.0.6943.138 Mobile Safari/537.36",
+                        "accept": "*/*",
+                        "x-app-device-detector": "your-value",
+                        "x-app-name": "your-value",
+                        "x-app-platform": "your-value",
+                        "x-app-subscription-type": "your-value",
+                        "x-app-user-id": "your-value"
+                    }
+                });
+
+                if (!response.ok) {
+                    console.error("خطأ في تحميل البث:", response.status);
+                    return;
+                }
+
+                let streamUrl = await response.text();
+
+                jwplayer("jwplayerDiv").setup({
+                    file: streamUrl,
+                    autostart: true,
+                    width: "100%",
+                    height: "100%",
+                    stretching: "exactfit"
+                });
+
+            } catch (error) {
+                console.error("فشل تحميل البث:", error);
             }
-        });
+        }
+
+        getStreamUrl();
     </script>
 </body>
 </html>
